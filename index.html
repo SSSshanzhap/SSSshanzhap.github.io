@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Résumé</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: #0c0f17;
+      --accent: #4af626;
+      --accent-soft: #9ff87a;
+      --muted: #6b7280;
+      --border: #1f2937;
+      --glow: 0 0 12px rgba(74, 246, 38, 0.35);
+      --font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(74, 246, 38, 0.05), transparent 35%),
+                  radial-gradient(circle at 80% 10%, rgba(74, 246, 38, 0.06), transparent 35%),
+                  var(--bg);
+      color: var(--accent);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .frame {
+      width: min(1100px, 100%);
+      background: linear-gradient(135deg, #0a0d13 0%, #0f1320 100%);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.65), var(--glow);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .frame::before, .frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(74, 246, 38, 0.015),
+        rgba(74, 246, 38, 0.015) 1px,
+        transparent 1px,
+        transparent 12px
+      );
+      mix-blend-mode: screen;
+    }
+    .frame::after {
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(74,246,38,0.06) 100%);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .logo {
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+    }
+    .logo span {
+      color: var(--accent-soft);
+    }
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: var(--glow);
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(74,246,38,0.02), rgba(74,246,38,0));
+      pointer-events: none;
+    }
+    .terminal {
+      background: #06080f;
+      border: 1px solid var(--border);
+      padding: 14px;
+      min-height: 120px;
+      line-height: 1.4;
+      color: var(--accent);
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.35);
+    }
+    .row { display: flex; gap: 10px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: rgba(74, 246, 38, 0.05);
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .muted { color: var(--muted); }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+    li { line-height: 1.4; }
+    .code-line::before {
+      content: ">";
+      color: var(--accent-soft);
+      padding-right: 8px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 14px 0;
+    }
+    .footer {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 16px;
+      background: var(--accent);
+      margin-left: 4px;
+      animation: blink 1s steps(1) infinite;
+      vertical-align: text-bottom;
+      box-shadow: var(--glow);
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+    .matrix {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.14;
+      font-size: 12px;
+      color: var(--accent);
+      mix-blend-mode: screen;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+    @media (max-width: 700px) {
+      body { padding: 16px; }
+      header { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="matrix" aria-hidden="true" id="matrix"></div>
+    <header>
+      <div class="logo">
+        <div class="pulse"></div>
+        <div>RESUME<span>_//HACK</span></div>
+      </div>
+      <div class="status" id="status">linking...</div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>identity</h2>
+        <div class="terminal" id="identity"></div>
+      </section>
+
+      <section class="panel">
+        <h2>skills // arsenal</h2>
+        <ul id="skills"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>operations // xp</h2>
+        <ul id="experience"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>projects // exploits</h2>
+        <ul id="projects"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>signals // contact</h2>
+        <div class="row" id="contact"></div>
+        <hr class="divider" />
+        <div class="terminal" id="quote"></div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <div>auto-build: <span id="timestamp"></span></div>
+      <div class="muted">vanilla // zero frameworks</div>
+    </div>
+  </div>
+
+  <script>
+    const randomOf = (list) => list[Math.floor(Math.random() * list.length)];
+    const joinUnique = (list, count) => {
+      const bag = [...list];
+      const out = [];
+      while (out.length < count && bag.length) {
+        const idx = Math.floor(Math.random() * bag.length);
+        out.push(bag.splice(idx, 1)[0]);
+      }
+      return out;
+    };
+
+    const handles = ["voidlink", "ghostline", "zero-day", "stacktrace", "cipherwolf", "hexgeist", "greenwire", "xeno", "sonar", "neonroot"];
+    const names = ["林泽行", "陈墨尘", "苏阑夜", "江浮光", "周沐白", "魏执", "夏笙", "叶归舟", "岑曜", "唐鹤鸣"];
+    const titles = ["渗透工程师", "安全研究员", "前端巫师", "全栈黑客", "系统架构师", "逆向猎手"];
+    const tech = ["TypeScript", "Rust", "Go", "Python", "Bash", "C", "Docker", "Kubernetes", "Nginx", "MongoDB", "PostgreSQL", "Redis", "GraphQL", "WebRTC", "WebGL", "Three.js", "Tailwind", "Vite", "Zig", "AWS", "GCP", "Azure"];
+    const traits = ["低延迟控", "零依赖爱好者", "偏执测试", "夜行性", "对称美学", "键盘收藏癖", "暗色系信徒"];
+    const ops = ["模糊测试100+ 微服务", "封锁第三方追踪脚本", "为CI链路加速 3x", "发现供应链投毒", "重写遗留前端 0依赖", "上线金丝雀策略", "设计密钥轮换自动机"];
+    const exploits = ["内网隧道可视化仪表", "静态资产签名器", "WebGPU 粒子火力演示", "API 指纹生成器", "容器隔离探针", "自修复前端缓存", "Serverless 事件裁剪器"];
+    const ctf = ["DEFCON quals", "0CTF", "L3HCTF", "RealWorld CTF", "XCTF", "BlueHat", "Hack.lu", "Google CTF"];
+    const quotes = [
+      "signal > noise. 重构即防御。",
+      "最好的防火墙是逻辑自洽。",
+      "code like tomorrow is compromised.",
+      "风暴来临，先检查日志。"
+    ];
+
+    const data = {
+      name: randomOf(names),
+      handle: randomOf(handles),
+      title: randomOf(titles),
+      location: randomOf(["Shanghai", "Chengdu", "Hangzhou", "Shenzhen", "Remote"]),
+      mail: `${Math.random().toString(16).slice(2, 8)}@pm.me`,
+      matrix: Array.from({ length: 320 }, () => randomOf("01abcdef")).join(""),
+      skills: joinUnique(tech, 9),
+      extras: joinUnique(traits, 3),
+      experience: joinUnique(ops, 4),
+      projects: joinUnique(exploits, 4),
+      ctf: joinUnique(ctf, 3),
+      quote: randomOf(quotes)
+    };
+
+    const identity = [
+      `handle   :: ${data.handle}`,
+      `alias    :: ${data.name}`,
+      `title    :: ${data.title}`,
+      `loc      :: ${data.location}`,
+      `mail     :: ${data.mail}`,
+      `ctf      :: ${data.ctf.join(", ")}`,
+      `traits   :: ${data.extras.join(" | ")}`
+    ].map(line => `<div class="code-line">${line}</div>`).join("");
+    document.getElementById("identity").innerHTML = identity + '<span class="cursor"></span>';
+
+    document.getElementById("skills").innerHTML = data.skills
+      .map(skill => `<li class="code-line">${skill}</li>`)
+      .join("");
+
+    document.getElementById("experience").innerHTML = data.experience
+      .map(item => `<li class="code-line">${item}</li>`)
+      .join("");
+
+    document.getElementById("projects").innerHTML = data.projects
+      .map(item => `<li class="code-line">${item}</li>`)
+      .join("");
+
+    document.getElementById("contact").innerHTML = `
+      <div class="badge">mail <span class="muted">${data.mail}</span></div>
+      <div class="badge">loc <span class="muted">${data.location}</span></div>
+      <div class="badge">handle <span class="muted">@${data.handle}</span></div>
+    `;
+
+    document.getElementById("quote").innerHTML = `<div class="code-line">${data.quote}</div>`;
+    document.getElementById("matrix").textContent = data.matrix;
+    document.getElementById("timestamp").textContent = new Date().toISOString();
+    document.getElementById("status").textContent = "link ok // resume served from gh-pages";
+  </script>
+</body>
+</html>
+
